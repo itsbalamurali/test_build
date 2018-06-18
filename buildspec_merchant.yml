@@ -1,0 +1,54 @@
+version: 0.2
+
+# Declaration of environment variables
+environment_variables:
+ plaintext:
+  REL_BUILD_VERSION: "1.2.0"
+# parameter-store:
+#  key: "value"
+#  key: "value"
+    
+phases:
+  install:
+    commands:
+      - printenv
+      - echo Entered the install phase
+      - apt-get update -y
+      - cd /opt/
+      - wget http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+      - tar -xvzf apache-maven-3.3.9-bin.tar.gz
+      - mv apache-maven-3.3.9 maven
+      - echo export JAVA_HOME=/usr/lib/jvm/java-8-oracle > /opt/buildenv.sh
+      - echo export M2_HOME=/opt/maven >> /opt/buildenv.sh
+      - echo export MAVEN_HOME=/opt/maven >> /opt/buildenv.sh
+      - echo export PATH=$M2_HOME/bin:$JAVA_HOME/bin:$PATH >> /opt/buildenv.sh
+      - chmod +x /opt/buildenv.sh
+      - sh /opt/buildenv.sh
+      - echo `mvn --version`
+      - echo $CODEBUILD_SRC_DIR
+      
+  build:
+    commands:
+      - echo Entered the build phases
+      - echo Build started on `date`, `pwd`, `echo $PATH`, `ls /opt`
+        # Reference environment variable using $ syntax
+        # mvn versions:set -DnewVersion=$REL_BUILD_VERSION -DgenerateBackupPoms=false      
+      - cd $CODEBUILD_SRC_DIR
+      - cd chatak-merchant/build && mvn install -Dmaven.test.skip=true
+
+  post_build:
+    commands:
+      - echo Entered the post build phase
+      - echo Build completed on `date`
+      - echo `ls $CODEBUILD_SRC_DIR/chatak-merchant/target/`
+      - echo `ls $CODEBUILD_SRC_DIR/chatak-merchant/`
+      - mkdir -p /opt/build/acquirer/gateway/webapps/
+      - cp $CODEBUILD_SRC_DIR/chatak-merchant/target/gateway-merchant.war /opt/build/acquirer/gateway/webapps/
+      - cd /opt/build
+      - tar -zcvhf ipsidy-gateway-merchant_v$REL_BUILD_VERSION.tar.gz acquirer
+        #aws s3 cp ipsidy-gateway-merchant_v$REL_BUILD_VERSION.tar.gz s3://ipsidy-deployments/acquirer/admin/$REL_BUILD_VERSION/  --acl bucket-owner-full-control --storage-class STANDARD
+
+artifacts:
+    files:
+      - /opt/build/ipsidy-gateway-merchant_v$REL_BUILD_VERSION.tar.gz
+    discard-paths: yes
