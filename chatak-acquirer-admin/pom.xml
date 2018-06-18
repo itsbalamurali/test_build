@@ -67,7 +67,9 @@
      <Build-User>${user.name}</Build-User>
      <Build-Branch>${SCMBranch}</Build-Branch>
      <Build-revision>${build.revision}</Build-revision>
-     <Build-Id>${BUILD_ID}</Build-Id>
+     <Build-Id>${BUILD_NUMBER}</Build-Id>
+     <Build-revision>${GIT_COMMIT</Build-revision>
+     <Build-branch>${GIT_BRANCH}</Build-branch>
     </manifestEntries>
     <manifest>
       <addClasspath>true</addClasspath>
