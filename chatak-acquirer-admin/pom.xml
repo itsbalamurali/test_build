@@ -38,8 +38,8 @@
      <Build-Time>${maven.build.timestamp}</Build-Time>
      <Build-User>${user.name}</Build-User>
      <Build-Number>${BUILD_NUMBER}</Build-Number>
-     <Git-Revision>${GIT_COMMIT}</Git-Revision>
-     <Git-Branch>${GIT_BRANCH}</Git-Branch>
+     <Build-Revision>${GIT_COMMIT}</Build-Revision>
+     <Build-Branch>${GIT_BRANCH}</Build-Branch>
     </manifestEntries> 
    </archive>
   </configuration>
