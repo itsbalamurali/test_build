@@ -68,10 +68,6 @@
      <Build-revision>${GIT_COMMIT}</Build-revision>
      <Build-branch>${GIT_BRANCH}</Build-branch>
     </manifestEntries>
-    <manifest>
-      <addClasspath>true</addClasspath>
-    </manifest>
-    
    </archive>
   </configuration>
 </plugin>
